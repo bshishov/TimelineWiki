@@ -1,4 +1,5 @@
 webpack:
+  image: node:6
   stage: build
   script:
     - npm install
