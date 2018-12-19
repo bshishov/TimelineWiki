@@ -2,6 +2,7 @@ webpack:
   image: node:6
   stage: build
   script:
+    - cd timelinewiki_frontend
     - npm install
     - npm run build
   artifacts:
