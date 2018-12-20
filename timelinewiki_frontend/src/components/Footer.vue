@@ -1,4 +1,7 @@
 <template>
+  <footer class="container">
+
+  </footer>
 </template>
 
 <script>
@@ -8,5 +11,8 @@
 </script>
 
 <style scoped>
+  footer {
+    height: 100px;
+  }
 
 </style>

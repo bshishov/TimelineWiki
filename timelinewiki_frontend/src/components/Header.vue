@@ -1,5 +1,5 @@
 <template>
-    <div id="header-nav" class="nav-bars">
+    <div id="header-nav" class="container">
         <router-link to="/">Home</router-link>
     </div>
 </template>

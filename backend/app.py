@@ -7,9 +7,9 @@ from backend.validations import *
 app = FlaskAPI(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/timelinewiki"
 
-CORS(app)
+#CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources=r'/*')
 mongo = PyMongo(app)
-
 
 STR_VALIDATION = [Type(str), StrNotEmpty()]
 URI_VALIDATION = [Type(str), StrNotEmpty(), StrMatchRe('^[a-z0-9_]+$')]
@@ -19,7 +19,7 @@ EVENT_TYPE_VALIDATION = [Type(str), In(['text', 'header'])]
 class Model(object):
     collection = None
 
-    def __init__(self, _id):
+    def __init__(self, _id=None):
         if isinstance(_id, str):
             _id = ObjectId(_id)
         if _id is None:
@@ -107,7 +107,8 @@ class Event(Model):
         SCHEMA_ONLY_THESE_FIELDS: True,
         SCHEMA_FIELDS: {
             'type': {FIELD_IS_REQUIRED: True, FIELD_VALIDATORS: EVENT_TYPE_VALIDATION},
-            'value': {FIELD_IS_REQUIRED: True, FIELD_VALIDATORS: STR_VALIDATION}
+            'value': {FIELD_IS_REQUIRED: True, FIELD_VALIDATORS: STR_VALIDATION},
+            'order': {FIELD_IS_REQUIRED: False, FIELD_VALIDATORS: [Type(float, int)]}
         }
     }
 
@@ -115,7 +116,8 @@ class Event(Model):
         SCHEMA_ONLY_THESE_FIELDS: True,
         SCHEMA_FIELDS: {
             'type': {FIELD_IS_REQUIRED: False, FIELD_VALIDATORS: EVENT_TYPE_VALIDATION},
-            'value': {FIELD_IS_REQUIRED: False, FIELD_VALIDATORS: STR_VALIDATION}
+            'value': {FIELD_IS_REQUIRED: False, FIELD_VALIDATORS: STR_VALIDATION},
+            'order': {FIELD_IS_REQUIRED: False, FIELD_VALIDATORS: [Type(float, int)]}
         }
     }
 
@@ -239,8 +241,9 @@ def realm_events(realm_uri):
     if request.method == 'POST':
         validate_schema(Event.POST_SCHEMA, request.data)
         event = Event(realm=realm_uri,
-                      type=str(request.data.get('type')),
-                      value=str(request.data.get('value')))
+                      type=request.data.get('type'),
+                      order=request.data.get('order'),
+                      value=request.data.get('value'))
         if event.save(upsert=True):
             return event.get_representation()
         return '', status.HTTP_400_BAD_REQUEST
@@ -265,6 +268,7 @@ def event_detail(event_id: str):
         validate_schema(Event.PUT_SCHEMA, request.data)
         event.type = request.data.get('type', event.type)
         event.value = request.data.get('value', event.value)
+        event.order = request.data.get('order', event.order)
         if event.save(upsert=False):
             return event.get_representation()
         return '', status.HTTP_400_BAD_REQUEST

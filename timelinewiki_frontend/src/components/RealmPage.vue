@@ -1,7 +1,11 @@
 <template>
     <div class="container">
+      <Outline :events="events"></Outline>
       <h1>{{ realm.name }}</h1>
-      <EventList v-bind:events="events" v-if="!loadInProgress" />
+      <EventList
+        :events="events"
+        :realm="realm.uri"
+        v-if="!loadInProgress" />
       <Loader v-else></Loader>
     </div>
 </template>
@@ -9,10 +13,11 @@
 <script>
   import EventList from "./EventList";
   import Loader from "./Loader";
+  import Outline from "./Outline";
 
   export default {
     name: "RealmPage",
-    components: {EventList, Loader},
+    components: {Outline, EventList, Loader},
     data() {
       return {
         realm: {name: '', uri: ''},

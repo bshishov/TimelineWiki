@@ -8,7 +8,12 @@
 
 <script>
   export default {
-    props: ['caption'],
+    props: {
+      caption: {
+        type: String,
+        required: false
+      }
+    },
     name: "Loader"
   }
 </script>

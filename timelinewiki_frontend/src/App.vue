@@ -12,7 +12,16 @@
 
   export default {
     name: 'App',
-    components: {Header, Footer}
+    components: {Header, Footer},
+    mounted: function() {
+      // From testing, without a brief timeout, it won't work.
+      setTimeout(() => this.scrollFix(this.$route.hash), 1)
+    },
+    methods: {
+      scrollFix: function(hashbang) {
+        location.href = hashbang;
+      }
+    }
   }
 </script>
 
@@ -21,8 +30,10 @@
 
   body {
     color: $color5;
-    background-color: $color3;
+    /* background-color: $color3;*/
+    background-color: white;
     font-family: $font-family;
+    font-size: 100%;
   }
 
   a {
@@ -30,8 +41,23 @@
   }
 
   .container {
-    padding: 10px;
     margin: 0 auto;
-    width: 800px;
+    max-width: 900px;
+  }
+
+  p {
+    line-height: 1.5em;
+    margin-bottom: 1em;
+  }
+
+  h1 {
+    font-size: 2em;
+    line-height: 1.3em;
+    margin-bottom: 0.8em;
+    font-weight: bold;
+  }
+
+  em, strong {
+    font-weight: bold;
   }
 </style>
